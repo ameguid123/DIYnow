@@ -10,4 +10,4 @@ from scrapy.item import Item, Field
 
 class DiynowItem(Item):
     title = Field()
-	# link = Field()
+    html = Field()

@@ -1,3 +1,7 @@
+# https://blog.siliconstraits.vn/building-web-crawler-scrapy/
+
+# makezine sitemap http://makezine.com/sitemap/
+# instructables sitemap http://www.instructables.com/sitemap/instructables/
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
@@ -14,9 +18,9 @@ class TitlesSpider(Spider):
 	#	yield scrapy.Request(url=url, callback=self.parse)
 
 	def parse(self, response):
-		titles = response.xpath('//*[@itemprop ]/a/text()').extract() #/text()
-
-		for title in titles:
+		infos = response.xpath('//*[@itemprop ]/a')
+		for info in infos:
 			item = DiynowItem()
-			item["title"] = title
+			item["title"] = info.xpath('text()').extract()
+			item["html"] = info.xpath('@href').extract()
 			yield item
