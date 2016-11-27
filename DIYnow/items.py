@@ -7,7 +7,6 @@
 
 #import scrapy
 from scrapy.item import Item, Field
-
 class DiynowItem(Item):
     title = Field()
     html = Field()
