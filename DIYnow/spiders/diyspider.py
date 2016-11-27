@@ -5,6 +5,7 @@
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
+import random
 
 class TitlesSpider(Spider):
 	name = "titles"
@@ -21,6 +22,12 @@ class TitlesSpider(Spider):
 		infos = response.xpath('//*[@itemprop ]/a')
 		for info in infos:
 			item = DiynowItem()
-			item["title"] = info.xpath('text()').extract()
-			item["html"] = info.xpath('@href').extract()
+			process_info(info, item)
 			yield item
+
+
+def process_info(info, item):
+	item["title"] = info.xpath('text()').extract()
+	item["html"] = info.xpath('@href').extract()
+
+
