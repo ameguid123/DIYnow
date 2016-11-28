@@ -10,12 +10,16 @@
 # Check if site has not chnaged its format, if no proceed, if yes use backup site
 # 	(if no snippet returned, use different site)
 
+# implement item pipeline/get images?
+# yield vs return
+# why sometimes returns only 2/3 projects? (bumped up to 4, so if fail still
+# get 3, but still sometimes only returns 2
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
 import random
 
-NUM_MAKEZINE_PROJECTS = 3
+NUM_MAKEZINE_PROJECTS = 4
 
 class MakezineSpider(Spider):
 	# name of the spider, used to launch the spider
@@ -42,14 +46,31 @@ class MakezineSpider(Spider):
 				yield Request(category, callback = self.parse_makezine_projects)
 
 	def parse_makezine_projects(self, response):
-
 		# list of html elements with xpath that leads to project link
 		projects = response.xpath('//ul[contains(@class, "sitemap_links")]/li/a')
 
-		# declare instance of a DiynowItem, fill in its fields, then yield
+		# declare instance of a DiynowItem and start to fill in fields
 		item = DiynowItem()
 		process_info(projects, item)
-		yield item
+		# find the html for the page of the random project of "item"
+		project_page = response.urljoin(item["html"])
+
+		# parse that random project page, and update item's image_html field
+		request = Request(project_page, callback = self.parse_project_page)
+		request.meta["item"] = item
+
+		return request
+
+	def parse_project_page(self, response):
+		# getting our previously declared item by using metadata, per:
+		# https://media.readthedocs.org/pdf/scrapy/1.0/scrapy.pdf, section 3.9 requests and responses
+		item = response.meta["item"]
+		# https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
+
+		# look for og:image as the image that best represents the project
+		image = response.xpath('//meta[@property="og:image"]')
+		item["image_html"] = image.xpath('@content').extract_first()
+		return item
 
 def process_info(projects, item):
 	# chose a random number between 0 and the number of projects in projects
