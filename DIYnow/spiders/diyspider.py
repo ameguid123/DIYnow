@@ -14,6 +14,8 @@
 # yield vs return
 # why sometimes returns only 2/3 projects? (bumped up to 4, so if fail still
 # get 3, but still sometimes only returns 2
+#
+# CHANGE HTML TO URL FOR CERTAIN FIELDS!!!!!!!!!!!!!!
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
@@ -66,7 +68,6 @@ class MakezineSpider(Spider):
 		# https://media.readthedocs.org/pdf/scrapy/1.0/scrapy.pdf, section 3.9 requests and responses
 		item = response.meta["item"]
 		# https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
-
 		# look for og:image as the image that best represents the project
 		image = response.xpath('//meta[@property="og:image"]')
 		item["image_html"] = image.xpath('@content').extract_first()
