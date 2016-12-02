@@ -15,13 +15,12 @@
 # why sometimes returns only 2/3 projects? (bumped up to 4, so if fail still
 # get 3, but still sometimes only returns 2
 #
-# CHANGE HTML TO URL FOR CERTAIN FIELDS!!!!!!!!!!!!!!
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
 import random
 
-NUM_MAKEZINE_PROJECTS = 4
+NUM_MAKEZINE_PROJECTS = 3
 
 class MakezineSpider(Spider):
 	# name of the spider, used to launch the spider
@@ -40,12 +39,13 @@ class MakezineSpider(Spider):
 			for i in range(NUM_MAKEZINE_PROJECTS):
 				# join our current url with the next category
 				category = response.urljoin(
-					# get a list of project cateogry htmls from the sitemap
+					# get a list of project cateogry urls from the sitemap
 					(categories.xpath('@href').extract())
-					# choose random project category html from list
+					# choose random project category url from list
 					[random.randrange(0, len(categories))])
 
-				yield Request(category, callback = self.parse_makezine_projects)
+				# dont filter set to true to allow spider to crawl same category twice
+				yield Request(category, callback = self.parse_makezine_projects, dont_filter = True)
 
 	def parse_makezine_projects(self, response):
 		# list of html elements with xpath that leads to project link
@@ -54,11 +54,11 @@ class MakezineSpider(Spider):
 		# declare instance of a DiynowItem and start to fill in fields
 		item = DiynowItem()
 		process_info(projects, item)
-		# find the html for the page of the random project of "item"
-		project_page = response.urljoin(item["html"])
+		# find the url for the page of the random project of "item"
+		project_page = response.urljoin(item["url"])
 
-		# parse that random project page, and update item's image_html field
-		request = Request(project_page, callback = self.parse_project_page)
+		# parse that random project page, and update item's image_url field
+		request = Request(project_page, callback = self.parse_project_page, dont_filter = True)
 		request.meta["item"] = item
 
 		return request
@@ -70,14 +70,14 @@ class MakezineSpider(Spider):
 		# https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
 		# look for og:image as the image that best represents the project
 		image = response.xpath('//meta[@property="og:image"]')
-		item["image_html"] = image.xpath('@content').extract_first()
+		item["image_url"] = image.xpath('@content').extract_first()
 		yield item
 
 def process_info(projects, item):
 	# chose a random number between 0 and the number of projects in projects
 	rand_num = random.randrange(0, len(projects))
 
-	# get the title and html info out of that random number project
+	# get the title and url info out of that random number project
 	item["title"] = (projects.xpath('text()').extract())[rand_num]
-	item["html"] = (projects.xpath('@href').extract())[rand_num]
+	item["url"] = (projects.xpath('@href').extract())[rand_num]
 

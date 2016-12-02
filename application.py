@@ -7,10 +7,10 @@ from time import gmtime, strftime
 import sqlite3
 import hashlib
 import subprocess
-
+import json
 from helpers import *
-
-
+# number of projects to display per row
+PROJECTS_PER_ROW = 3
 # -----------------------------database creation--------------------------------
 # https://docs.python.org/3.6/library/sqlite3.html#sqlite3.Connection
 # create a Connection object that represents the database.
@@ -48,9 +48,12 @@ Session(app)
 def index():
 	# http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
 	makezineSpider_name = "Makezine"
-	subprocess.check_output(['scrapy', 'crawl', makezineSpider_name, "-o", "output.json"])
-	with open("output.json") as items_file:
-		return items_file.read()
+	subprocess.check_output(['scrapy', 'crawl', makezineSpider_name, "-o", "MakezineOut.json"])
+	json_data=open("MakezineOut.json").read()
+	project_list = json.loads(json_data)
+	#http://stackoverflow.com/questions/4838504/how-do-i-truncate-a-list
+	return render_template("index.html", project_list = project_list)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

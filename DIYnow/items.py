@@ -9,6 +9,6 @@
 from scrapy.item import Item, Field
 class DiynowItem(Item):
     title = Field()
-    html = Field()
-    image_html = Field()
+    url = Field()
+    image_url = Field()
 

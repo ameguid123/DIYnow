@@ -8,86 +8,17 @@
   <div class="container-fluid">
   <!-- http://getbootstrap.com/components/#thumbnails -->
     <div class="row">
+    {% for project in project_list %}
       <div class="col-md-4">
         <div class="thumbnail">
-          <a href="http://www.w3schools.com/w3images/lights.jpg">
-            <img src="http://www.w3schools.com/w3images/lights.jpg" alt="Lights" style="width:100%">
+          <a href="{{project['url']}}">
+            <img src={{project["image_url"]}} alt="" style="width:100%">
             <div class="caption">
-              <p>Lorem ipsum</p>
+              <p>{{project["title"]}}</p>
               <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
             </div>
           </a>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="/w3images/fjords.jpg">
-            <img src="http://www.w3schools.com/w3images/fjords.jpg" alt="Nature" style="width:100%">
-            <div class="caption">
-              <p>Lorem ipsum</p>
-              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="/w3images/fjords.jpg">
-            <img src="http://www.w3schools.com/w3images/fjords.jpg" alt="Fjords" style="width:100%">
-            <div class="caption">
-              <p>Lorem ipsum</p>
-              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-     <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="/w3images/fjords.jpg">
-            <img src="http://www.w3schools.com/w3images/fjords.jpg" alt="Nature" style="width:100%">
-            <div class="caption">
-              <p>Lorem ipsum</p>
-              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="/w3images/fjords.jpg">
-            <img src="http://www.w3schools.com/w3images/fjords.jpg" alt="Fjords" style="width:100%">
-            <div class="caption">
-              <p>Lorem ipsum</p>
-              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-     <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="/w3images/fjords.jpg">
-            <img src="http://www.w3schools.com/w3images/fjords.jpg" alt="Nature" style="width:100%">
-            <div class="caption">
-              <p>Lorem ipsum</p>
-              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="/w3images/fjords.jpg">
-            <img src="http://www.w3schools.com/w3images/fjords.jpg" alt="Fjords" style="width:100%">
-            <div class="caption">
-              <p>Lorem ipsum...</p>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+    {% endfor %}
 {% endblock %}
