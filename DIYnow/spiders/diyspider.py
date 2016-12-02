@@ -12,15 +12,19 @@
 
 # implement item pipeline/get images?
 # yield vs return
-# why sometimes returns only 2/3 projects? (bumped up to 4, so if fail still
-# get 3, but still sometimes only returns 2
-#
+
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
 import random
 
 NUM_MAKEZINE_PROJECTS = 3
+
+# defines for project categories we exclude in Makezine search
+MAKEZINE_EDUCATION = 3
+MAKER_NEWS = 5
+UNCATEGORIZED = 8
+PAGE = 10
 
 class MakezineSpider(Spider):
 	# name of the spider, used to launch the spider
@@ -35,14 +39,21 @@ class MakezineSpider(Spider):
 
 		# ensure this list is not empty (site format is same)
 		if categories.extract_first() is not None:
-
 			for i in range(NUM_MAKEZINE_PROJECTS):
-				# join our current url with the next category
+				# generate a random number to select a random project category
+				# however, exclude certain categories, (not diy project related)
+				rand_num = -1
+				while(rand_num == -1 or rand_num == MAKEZINE_EDUCATION or
+						rand_num == MAKER_NEWS or rand_num == UNCATEGORIZED or
+						rand_num == PAGE):
+
+					rand_num = random.randrange(0, len(categories))
+				# join our current url with the next random category
 				category = response.urljoin(
 					# get a list of project cateogry urls from the sitemap
 					(categories.xpath('@href').extract())
 					# choose random project category url from list
-					[random.randrange(0, len(categories))])
+					[rand_num])
 
 				# dont filter set to true to allow spider to crawl same category twice
 				yield Request(category, callback = self.parse_makezine_projects, dont_filter = True)
