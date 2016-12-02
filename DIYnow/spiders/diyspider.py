@@ -71,7 +71,7 @@ class MakezineSpider(Spider):
 		# look for og:image as the image that best represents the project
 		image = response.xpath('//meta[@property="og:image"]')
 		item["image_html"] = image.xpath('@content').extract_first()
-		return item
+		yield item
 
 def process_info(projects, item):
 	# chose a random number between 0 and the number of projects in projects

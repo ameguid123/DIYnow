@@ -1,0 +1,15 @@
+X-Cache: MISS
+Access-Control-Allow-Origin: *
+Cache-Control: max-age=3600, must-revalidate
+Date: Fri, 02 Dec 2016 03:13:43 GMT
+Cf-Ray: 30ab9abae3f05a3e-BOS
+X-Cache-Group: normal
+X-Pass-Why: 
+Vary: Accept-Encoding,Cookie
+X-Cacheable: YES:3600.000
+Server: cloudflare-nginx
+Content-Encoding: gzip
+Link: <http://makezine.com/wp-json/>; rel="https://api.w.org/"
+Link: <http://wp.me/p5PaNG-27UL>; rel=shortlink
+X-Type: default
+Content-Type: text/html; charset=UTF-8

@@ -1,0 +1,13 @@
+Server: cloudflare-nginx
+Set-Cookie: __cfduid=de886a5aeb8f9c4d7e003f347a05eba161480648352; expires=Sat, 02-Dec-17 03:12:32 GMT; path=/; domain=.makezine.com; HttpOnly
+Cf-Ray: 30ab990bb5215a74-BOS
+Content-Encoding: gzip
+Vary: Accept-Encoding
+Cf-Cache-Status: HIT
+X-Type: robots
+Last-Modified: Mon, 21 Sep 2015 03:03:17 GMT
+Date: Fri, 02 Dec 2016 03:12:32 GMT
+Etag: W/"55ff7375-90"
+Expires: Sun, 01 Jan 2017 03:12:32 GMT
+Content-Type: text/plain
+Cache-Control: public, max-age=2592000

@@ -1,0 +1,15 @@
+Link: <http://makezine.com/wp-json/>; rel="https://api.w.org/"
+Link: <http://wp.me/p5PaNG-29Mn>; rel=shortlink
+Cache-Control: max-age=3600, must-revalidate
+X-Cache-Group: normal
+Content-Encoding: gzip
+Access-Control-Allow-Origin: *
+X-Pass-Why: 
+Vary: Accept-Encoding,Cookie
+Cf-Ray: 30ab9225039a5a74-BOS
+Content-Type: text/html; charset=UTF-8
+X-Type: default
+Date: Fri, 02 Dec 2016 03:07:52 GMT
+Server: cloudflare-nginx
+X-Cache: MISS
+X-Cacheable: YES:3600.000

@@ -6,6 +6,7 @@ from datetime import datetime
 from time import gmtime, strftime
 import sqlite3
 import hashlib
+import subprocess
 
 from helpers import *
 
@@ -45,7 +46,11 @@ Session(app)
 @app.route("/")
 #@login_required
 def index():
-	return render_template("index.html")
+	# http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
+	makezineSpider_name = "Makezine"
+	subprocess.check_output(['scrapy', 'crawl', makezineSpider_name, "-o", "output.json"])
+	with open("output.json") as items_file:
+		return items_file.read()
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

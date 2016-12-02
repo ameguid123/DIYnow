@@ -1,0 +1,16 @@
+Server: cloudflare-nginx
+Set-Cookie: X-Mapping-fjhppofk=F301A29E691A849E46FF615813FE88F8; path=/
+Cf-Ray: 30ab990be54b5a74-BOS
+Content-Encoding: gzip
+Vary: Accept-Encoding,Cookie
+X-Cache: HIT: 3
+X-Type: default
+X-Cache-Group: normal
+Date: Fri, 02 Dec 2016 03:12:32 GMT
+X-Cacheable: YES:3600.000
+Content-Type: text/html; charset=UTF-8
+X-Pass-Why: 
+Link: <http://makezine.com/wp-json/>; rel="https://api.w.org/"
+Link: <http://wp.me/P5PaNG-22tU>; rel=shortlink
+Cache-Control: max-age=3600, must-revalidate
+Access-Control-Allow-Origin: *
