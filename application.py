@@ -48,17 +48,12 @@ Session(app)
 #@login_required
 def index():
 	# http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
-	makezineSpider_name = "Makezine"
-	subprocess.check_output(['scrapy', 'crawl', makezineSpider_name, "-o", "MakezineOut.json"])
-	json_data=open("MakezineOut.json").read()
-	make_projects = json.loads(json_data)
+	projectSpiderName = "Projects"
+	subprocess.check_output(['scrapy', 'crawl', projectSpiderName, "-o", "ProjectOut.json"])
+	json_data=open("ProjectOut.json").read()
+	projects = json.loads(json_data)
 
-	instructablesSpider_name = "Instructables"
-	subprocess.check_output(['scrapy', 'crawl', instructablesSpider_name, "-o", "InstructablesOut.json"])
-	json_data=open("InstructablesOut.json").read()
-	instruct_projects = json.loads(json_data)
-
-	return render_template("index.html", make_projects = make_projects, instruct_projects = instruct_projects)
+	return render_template("index.html", projects = projects)
 
 
 @app.route("/login", methods=["GET", "POST"])

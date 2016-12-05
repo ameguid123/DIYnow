@@ -14,16 +14,7 @@
 # yield vs return
 # # Try better xpaths for speed? no //'s, exact path? (less flexible...)
 
-# NEWEST ERROR:
-# File "/Users/Fathio/ameguid123_GitHub/DIYnow/DIYnow/spiders/diyspider.py", line 123, in parse_instructables_projects
-#     process_info(projects, item)
-#   File "/Users/Fathio/ameguid123_GitHub/DIYnow/DIYnow/spiders/diyspider.py", line 148, in process_info
-#     item["title"] = (projects.xpath('text()').extract())[rand_num]
-# IndexError: list index out of range
-# 2016-12-02 22:29:59 [scrapy] DEBUG: Redirecting (301) to <GET http://www.instructables.com/id/Jester-Costume/> from <GET http://www.instructables.com/id/Jester-Costume>
-# 2016-12-02 22:29:59 [scrapy] DEBUG: Crawled (2
-
-
+# http://stackoverflow.com/questions/11128596/scrapy-crawlspider-how-to-access-item-across-different-levels-of-parsing
 from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
@@ -39,14 +30,16 @@ MAKER_NEWS = 5
 UNCATEGORIZED = 8
 PAGE = 10
 
-class MakezineSpider(Spider):
+class ProjectSpider(Spider):
 	# name of the spider, used to launch the spider
-	name = "Makezine"
+	name = "Projects"
 
 	# a list of URLs that the crawler will start at
 	start_urls = ["http://makezine.com/sitemap/"]
 
+	# starting the chain of requests
 	def parse(self, response):
+
 		# list of html elements with this xpath (the project categories)
 		categories = response.xpath('//li[contains(@class, "title")]/a')
 
@@ -70,6 +63,10 @@ class MakezineSpider(Spider):
 
 				# dont filter set to true to allow spider to crawl same category twice
 				yield Request(category, callback = self.parse_makezine_projects, dont_filter = True)
+
+			# http://stackoverflow.com/questions/17560575/using-scrapy-to-extract-information-from-different-sites
+			yield Request(url="http://www.instructables.com/sitemap/instructables/", callback=self.parse_instructables_categories)
+
 
 	def parse_makezine_projects(self, response):
 		# list of html elements with xpath that leads to project link
@@ -97,22 +94,13 @@ class MakezineSpider(Spider):
 		item["image_url"] = image.xpath('@content').extract_first()
 		yield item
 
-class InstructablesSpider(Spider):
-	# name of the spider, used to launch the spider
-	name = "Instructables"
-
-	# a list of URLs that the crawler will start at
-	start_urls = ["http://www.instructables.com/sitemap/instructables/"]
-
-	def parse(self, response):
-		# list of html elements with this xpath (the project categories)
+	def parse_instructables_categories(self, response):
+		# like parse_makezine_projects, with different xpath and restrictions
 		categories = response.xpath('//ul[contains(@class, "main-listing")]/li/a')
 		# ensure this list is not empty (site format is same)
 		if categories.extract_first() is not None:
 
 			for i in range(NUM_INSTRUCTABLES_PROJECTS):
-				logging.info("YO")
-				logging.info(categories.xpath('@href').extract_first())
 
 				# join our current url with the next random category
 				category = response.urljoin(
@@ -140,21 +128,15 @@ class InstructablesSpider(Spider):
 
 		return request
 
-	def parse_project_page(self, response):
-		# getting our previously declared item by using metadata, per:
-		# https://media.readthedocs.org/pdf/scrapy/1.0/scrapy.pdf, section 3.9 requests and responses
-		item = response.meta["item"]
-		# https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
-		# look for og:image as the image that best represents the project
-		image = response.xpath('//meta[@property="og:image"]')
-		item["image_url"] = image.xpath('@content').extract_first()
-		yield item
-
 def process_info(projects, item):
 	# chose a random number between 0 and the number of projects in projects
 	rand_num = random.randrange(0, len(projects))
 
 	# get the title and url info out of that random number project
-	item["title"] = (projects.xpath('text()').extract())[rand_num]
-	item["url"] = (projects.xpath('@href').extract())[rand_num]
+	# this process could fail if formatted oddly, if so, get a different project
+	try:
+		item["title"] = (projects.xpath('text()').extract())[rand_num]
+		item["url"] = (projects.xpath('@href').extract())[rand_num]
+	except IndexError:
+		process_info(projects, item)
 
