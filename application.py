@@ -11,6 +11,7 @@ import json
 from helpers import *
 # number of projects to display per row
 PROJECTS_PER_ROW = 3
+
 # -----------------------------database creation--------------------------------
 # https://docs.python.org/3.6/library/sqlite3.html#sqlite3.Connection
 # create a Connection object that represents the database.
@@ -50,9 +51,14 @@ def index():
 	makezineSpider_name = "Makezine"
 	subprocess.check_output(['scrapy', 'crawl', makezineSpider_name, "-o", "MakezineOut.json"])
 	json_data=open("MakezineOut.json").read()
-	project_list = json.loads(json_data)
-	#http://stackoverflow.com/questions/4838504/how-do-i-truncate-a-list
-	return render_template("index.html", project_list = project_list)
+	make_projects = json.loads(json_data)
+
+	instructablesSpider_name = "Instructables"
+	subprocess.check_output(['scrapy', 'crawl', instructablesSpider_name, "-o", "InstructablesOut.json"])
+	json_data=open("InstructablesOut.json").read()
+	instruct_projects = json.loads(json_data)
+
+	return render_template("index.html", make_projects = make_projects, instruct_projects = instruct_projects)
 
 
 @app.route("/login", methods=["GET", "POST"])
