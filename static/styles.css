@@ -6,32 +6,45 @@ html {
 	-o-background-size: cover;
 	background-size: cover;
 }
+
 body {
 	background-color: transparent;
 	padding-top: 70px;
 }
 
+.container {
+  /* center contents */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* from PSET7 */
+main .form-control {
+  /* center form controls */
+  display: inline-block;
+
+  /* override Bootstrap's 100% width for form controls */
+  width: auto;
+}
+
 .thumbnail {
-height: 400px;
+  height: 400px;
 }
 
 .img-responsive {
   max-height: 70%;
 }
 /* colors for navbar */
-.navbar-default .navbar-brand .blue
-{
-    color: #537fbe;
+.navbar-default .navbar-brand .blue {
+  color: #537fbe;
 }
-.navbar-default .navbar-brand .red
-{
-    color: #ea433b;
+.navbar-default .navbar-brand .red {
+  color: #ea433b;
 }
-.navbar-default .navbar-brand .yellow
-{
-    color: #f5b82e;
+.navbar-default .navbar-brand .yellow {
+  color: #f5b82e;
 }
-.navbar-default .navbar-brand .green
-{
-    color: #2e944b;
+.navbar-default .navbar-brand .green {
+  color: #2e944b;
 }

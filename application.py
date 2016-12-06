@@ -10,8 +10,14 @@ import subprocess
 import json
 from helpers import *
 import os
+import logging
+import sys
+# enabling print statements
+sys.stdout.flush()# TODO: CLeanup import statements
+# TODO: CONN.CLOSE?!?!
+# TODO: FLASH FOR INCORRECT PASSWORDS/USERNAME, ETC
+# TODO: ADD THIS FEATURE??
 # number of projects to display per row
-
 PROJECTS_PER_ROW = 3
 
 # -----------------------------database creation--------------------------------
@@ -19,10 +25,12 @@ PROJECTS_PER_ROW = 3
 # create a Connection object that represents the database.
 conn = sqlite3.connect("DIYnow.db")
 
+# http://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
+# https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory
+conn.row_factory = sqlite3.Row
+
 # creating a cursor object for executing SQL commands
 c = conn.cursor()
-
-
 
 # ---------------------------------flask setup----------------------------------
 # configure application
@@ -45,23 +53,152 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 # export FLASK_APP=application.py
 # ---------------------------------END SETUP------------------------------------
-@app.route("/")
-#@login_required
-def index():
-	# http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
-	if (os.path.isfile('ProjectOut.json')):
-		os.remove("ProjectOut.json")
-	projectSpiderName = "Projects"
-	subprocess.check_output(['scrapy', 'crawl', projectSpiderName, "-o", "ProjectOut.json"])
-	json_data=open("ProjectOut.json").read()
-	projects = json.loads(json_data)
-
-	return render_template("index.html", projects = projects)
 
 
+@app.route("/", methods=["GET", "POST"])
+@login_required
+def home():
+    """Show new projects and allow user to add projects to their list"""
+
+    # if user reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        user_id = session["user_id"]
+
+        # get which number project the user selected
+        index = request.form["DIYnow"]
+
+        # convert to 0 indexing
+        index = int(index) - 1
+
+        json_data=open("ProjectOut.json").read()
+        projects = json.loads(json_data)
+        # http://stackoverflow.com/questions/19794695/flask-python-buttons
+        for i, project in enumerate(projects):
+        	if i == index:
+        		project_url = project["url"]
+        		project_name = project["title"]
+        		image_url = project["image_url"]
+
+
+        # insert the new project into the portfolio table
+        try:
+            c.execute("INSERT INTO projects (id, project_url, project_name, image_url) VALUES(:id, :project_url, :project_name, :image_url)",
+                            {"id" : user_id, "project_url" : project_url, "project_name" : project_name, "image_url" : image_url })
+            conn.commit()
+
+        except RuntimeError:
+            return ("ERROR updated too few or too many rows of projects")
+
+        # flash("Added!")
+        return render_template("success.html")
+
+    # else if user reached route via GET (as by clicking a link or via redirect)
+    else:
+    # http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
+        if (os.path.isfile('ProjectOut.json')):
+            os.remove("ProjectOut.json")
+
+        projectSpiderName = "Projects"
+        subprocess.check_output(['scrapy', 'crawl', projectSpiderName, "-o", "ProjectOut.json"])
+        json_data=open("ProjectOut.json").read()
+        projects = json.loads(json_data)
+        return render_template("home.html", projects = projects)
+
+# CREDIT PSET 7
 @app.route("/login", methods=["GET", "POST"])
 def login():
-	return render_template("index.html");
+    """Log user in."""
+
+    # forget any user_id
+    session.clear()
+
+    # if user reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # ensure username was submitted
+        if not request.form.get("username"):
+            return ("must provide username")
+
+        # ensure password was submitted
+        elif not request.form.get("password"):
+            return ("must provide password")
+
+        # query database for username
+        c.execute("SELECT * FROM users WHERE username = :username", {"username":request.form.get("username")})
+        rows = c.fetchall()
+
+        # ensure username exists and password is correct
+        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
+            return ("invalid username and/or password")
+
+        # remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # redirect user to home page
+        return redirect(url_for("home"))
+
+    # else if user reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Register user."""
+    # if user reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        # ensure username was submitted
+        username = request.form.get("username")
+        if not username:
+            return ("must provide username")
+
+        # ensure username is unique
+        if c.execute("SELECT username FROM users WHERE username = :username", {"username" : username}).fetchall() != []:
+            return ("must provide unique username")
+
+        # ensure password was submitted
+        password = request.form.get("password")
+        if not password:
+            return ("must provide password")
+
+        # ensure password was confirmed correctly
+        if request.form.get("confirm_password") != password:
+            return ("incorrect password confirmation")
+
+        # encrypt user's password and insert user info into users table
+        try:
+            new_id = c.execute("INSERT INTO users (username, hash) VALUES(:username, :hash_)",
+                        {"username" : username, "hash_" : pwd_context.encrypt(password)})
+            # save the changes to the table
+            conn.commit()
+
+        except RuntimeError:
+            return ("ERROR creating new user")
+
+        # remember which user has logged in, redirect to index page and welcome
+        session["user_id"] = new_id
+
+        flash("Registered!")
+        return redirect(url_for("home"))
+
+    # else if user reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("register.html")
+
+@app.route("/logout")
+def logout():
+    """Log user out."""
+
+    # forget any user_id
+    session.clear()
+
+    # redirect user to login form
+    return redirect(url_for("login"))
+
+@app.route("/my_projects", methods=["GET", "POST"])
+@login_required
+def my_projects():
+   """Buy shares of stock."""
+    # if user reached route via POST (as by submitting a form via POST)
 
 # # Create table
 # c.execute('''CREATE TABLE stocks

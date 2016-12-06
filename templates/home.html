@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block main %}
+  <div class="container-fluid">
+  <!-- http://getbootstrap.com/components/#thumbnails -->
+    <div class="row">
+    {% for project in projects %}
+      <div class="col-md-4">
+        <div class="thumbnail">
+          <a href={{project["url"]}} class="projects">
+            <img class="img-responsive" src={{project["image_url"]}} alt="Project picture">
+          </a>
+          <div class="caption">
+            <a href={{project["url"]}} class="projects">
+              <p>{{project["title"]}}</p>
+            </a>
+            <form action="{{ url_for('home') }}" method="post">
+              <button name="DIYnow" class="btn btn-primary" value={{ loop.index }}>DIYnow</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+{% endblock %}

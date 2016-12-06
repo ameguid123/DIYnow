@@ -19,10 +19,13 @@ from scrapy.spiders import Spider
 from DIYnow.items import DiynowItem
 from scrapy.http import Request
 import random
-import logging
 
 NUM_MAKEZINE_PROJECTS = 3
 NUM_INSTRUCTABLES_PROJECTS = 3
+NUM_LIFEHACKER_PROJECTS = 3
+
+# number of recent lifehacker DIY projects to reference (here last 5000)
+LIFEHACKER_RANGE = 5000
 
 # defines for project categories we exclude in Makezine search
 MAKEZINE_EDUCATION = 3
@@ -65,6 +68,7 @@ class ProjectSpider(Spider):
 				yield Request(category, callback = self.parse_makezine_projects, dont_filter = True)
 
 			# http://stackoverflow.com/questions/17560575/using-scrapy-to-extract-information-from-different-sites
+			# passing request to next site, instructables
 			yield Request(url="http://www.instructables.com/sitemap/instructables/", callback=self.parse_instructables_categories)
 
 
@@ -84,16 +88,6 @@ class ProjectSpider(Spider):
 
 		return request
 
-	def parse_project_page(self, response):
-		# getting our previously declared item by using metadata, per:
-		# https://media.readthedocs.org/pdf/scrapy/1.0/scrapy.pdf, section 3.9 requests and responses
-		item = response.meta["item"]
-		# https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
-		# look for og:image as the image that best represents the project
-		image = response.xpath('//meta[@property="og:image"]')
-		item["image_url"] = image.xpath('@content').extract_first()
-		yield item
-
 	def parse_instructables_categories(self, response):
 		# like parse_makezine_projects, with different xpath and restrictions
 		categories = response.xpath('//ul[contains(@class, "main-listing")]/li/a')
@@ -112,6 +106,11 @@ class ProjectSpider(Spider):
 				# dont filter set to true to allow spider to crawl same category twice
 				yield Request(category, callback = self.parse_instructables_projects, dont_filter = True)
 
+			# passing request to next site at a random diy category page
+			rand_num = random.randrange(0, LIFEHACKER_RANGE)
+			yield Request(url="http://lifehacker.com/tag/diy?startIndex=" + str(rand_num), callback=self.parse_lifehacker_projects)
+
+
 	def parse_instructables_projects(self, response):
 		# list of html elements with xpath that leads to project link
 		projects = response.xpath('//ul[contains(@class, "main-listing")]/li/a')
@@ -127,6 +126,36 @@ class ProjectSpider(Spider):
 		request.meta["item"] = item
 
 		return request
+
+	def parse_lifehacker_projects(self, response):
+		# list of html elements with xpath that leads to project link
+		projects = response.xpath('//h1[contains(@class, "headline entry-title js_entry-title")]/a')
+
+		if projects.extract_first() is not None:
+			for i in range(NUM_LIFEHACKER_PROJECTS):
+				# declare instance of a DiynowItem and start to fill in fields
+				item = DiynowItem()
+				process_info(projects, item)
+
+				# find the url for the page of the random project of "item"
+				project_page = response.urljoin(item["url"])
+
+				# parse that random project page, and update item's image_url field
+				request = Request(project_page, callback = self.parse_project_page, dont_filter = True)
+				request.meta["item"] = item
+
+				yield request
+
+	def parse_project_page(self, response):
+		# getting our previously declared item by using metadata, per:
+		# https://media.readthedocs.org/pdf/scrapy/1.0/scrapy.pdf, section 3.9 requests and responses
+		item = response.meta["item"]
+		# https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
+		# look for og:image as the image that best represents the project
+		image = response.xpath('//meta[@property="og:image"]')
+		item["image_url"] = image.xpath('@content').extract_first()
+		yield item
+
 
 def process_info(projects, item):
 	# chose a random number between 0 and the number of projects in projects
