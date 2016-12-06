@@ -11,8 +11,8 @@
     {% for project in projects %}
       <div class="col-md-4">
         <div class="thumbnail">
-          <a href="{{project['url']}}">
-            <img src={{project["image_url"]}} alt="" style="width:100%">
+          <a href={{project["url"]}}>
+            <img class="img-responsive" src={{project["image_url"]}} alt="">
             <div class="caption">
               <p>{{project["title"]}}</p>
               <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
@@ -22,19 +22,5 @@
       </div>
     {% endfor %}
     </div>
-    <div class="row">
-    {% for project in instruct_projects %}
-      <div class="col-md-4">
-        <div class="thumbnail">
-          <a href="{{project['url']}}">
-            <img src={{project["image_url"]}} alt="" style="width:100%">
-            <div class="caption">
-              <p>{{project["title"]}}</p>
-              <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-          </a>
-        </div>
-      </div>
-    {% endfor %}
-    </div>
+  </div>
 {% endblock %}

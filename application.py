@@ -9,7 +9,9 @@ import hashlib
 import subprocess
 import json
 from helpers import *
+import os
 # number of projects to display per row
+
 PROJECTS_PER_ROW = 3
 
 # -----------------------------database creation--------------------------------
@@ -43,11 +45,12 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 # export FLASK_APP=application.py
 # ---------------------------------END SETUP------------------------------------
-
 @app.route("/")
 #@login_required
 def index():
 	# http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
+	if (os.path.isfile('ProjectOut.json')):
+		os.remove("ProjectOut.json")
 	projectSpiderName = "Projects"
 	subprocess.check_output(['scrapy', 'crawl', projectSpiderName, "-o", "ProjectOut.json"])
 	json_data=open("ProjectOut.json").read()

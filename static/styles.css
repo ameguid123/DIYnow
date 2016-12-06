@@ -1,6 +1,6 @@
 /* http://stackoverflow.com/questions/18612651/how-to-use-responsive-background-image-in-css3-in-bootstrap */
 html {
-  	background: url(http://cdn1.bestpsdfreebies.com/wp-content/uploads/2014/03/blueprint-pattern-4.jpg) no-repeat center center fixed;
+  background: url(http://cdn1.bestpsdfreebies.com/wp-content/uploads/2014/03/blueprint-pattern-4.jpg) no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -9,6 +9,14 @@ html {
 body {
 	background-color: transparent;
 	padding-top: 70px;
+}
+
+.thumbnail {
+height: 400px;
+}
+
+.img-responsive {
+  max-height: 70%;
 }
 /* colors for navbar */
 .navbar-default .navbar-brand .blue
