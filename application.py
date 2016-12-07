@@ -12,6 +12,7 @@ from helpers import *
 import os
 import logging
 import sys
+
 # enabling print statements
 sys.stdout.flush()# TODO: CLeanup import statements
 # TODO: CONN.CLOSE?!?!
@@ -102,8 +103,15 @@ def home():
 
         # user has entered a search string
         else:
-            return ("all set")
+            if (os.path.isfile('ProjectOut.json')):
+                os.remove("ProjectOut.json")
 
+            #http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
+            projectSpiderName = "Search"
+            subprocess.check_output(['scrapy', 'crawl', projectSpiderName, "-a", ("category=" + request.form.get("search")), "-o", "ProjectOut.json"])
+            json_data=open("ProjectOut.json").read()
+            projects = json.loads(json_data)
+            return render_template("home.html", projects = projects)
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     else:
