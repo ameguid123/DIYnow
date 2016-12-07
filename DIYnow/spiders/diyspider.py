@@ -156,7 +156,6 @@ class ProjectSpider(Spider):
 		item["image_url"] = image.xpath('@content').extract_first()
 		yield item
 
-
 def process_info(projects, item):
 	# chose a random number between 0 and the number of projects in projects
 	rand_num = random.randrange(0, len(projects))

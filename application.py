@@ -67,48 +67,56 @@ def home():
 
     # if user reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        user_id = session["user_id"]
+        # chck if the POST came from the user adding a project
+        if "DIYnow" in request.form:
+            user_id = session["user_id"]
 
-        # get which project the user selected
-        project_url = request.form["DIYnow"]
+            # get which project the user selected
+            project_url = request.form["DIYnow"]
 
-        json_data=open("ProjectOut.json").read()
-        projects = json.loads(json_data)
+            json_data=open("ProjectOut.json").read()
+            projects = json.loads(json_data)
 
-        # http://stackoverflow.com/questions/19794695/flask-python-buttons
-        for project in projects:
-            if project["url"] == project_url:
-                project_url = project["url"]
-                project_name = project["title"]
-                image_url = project["image_url"]
+            # http://stackoverflow.com/questions/19794695/flask-python-buttons
+            for project in projects:
+                if project["url"] == project_url:
+                    project_url = project["url"]
+                    project_name = project["title"]
+                    image_url = project["image_url"]
 
-        # insert the new project into the portfolio table
-        try:
-            c.execute("INSERT INTO projects (id, project_url, project_name, image_url) VALUES(:id, :project_url, :project_name, :image_url)",
-                            {"id" : user_id, "project_url" : project_url, "project_name" : project_name, "image_url" : image_url })
-            conn.commit()
+            # insert the new project into the portfolio table
+            try:
+                c.execute("INSERT INTO projects (id, project_url, project_name, image_url) VALUES(:id, :project_url, :project_name, :image_url)",
+                                {"id" : user_id, "project_url" : project_url, "project_name" : project_name, "image_url" : image_url })
+                conn.commit()
 
-        except RuntimeError:
-            return ("ERROR updated too few or too many rows of projects")
-        # unique index (user_project) prevents duplicate addition of projects
-        # http://stackoverflow.com/questions/29312882/sqlite-preventing-duplicate-rows
-        except sqlite3.IntegrityError:
-            return ("you've already added that project!")
+            except RuntimeError:
+                return ("ERROR updated too few or too many rows of projects")
+            # unique index (user_project) prevents duplicate addition of projects
+            # http://stackoverflow.com/questions/29312882/sqlite-preventing-duplicate-rows
+            except sqlite3.IntegrityError:
+                return ("you've already added that project!")
 
-        flash("Added!")
-        return render_template("home.html", projects = projects)
+            flash("Added!")
+            return render_template("home.html", projects = projects)
+
+        # user has entered a search string
+        else:
+            return ("all set")
+
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     else:
-    # http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
         if (os.path.isfile('ProjectOut.json')):
             os.remove("ProjectOut.json")
 
+        # http://stackoverflow.com/questions/36384286/how-to-integrate-flask-scrapy
         projectSpiderName = "Projects"
         subprocess.check_output(['scrapy', 'crawl', projectSpiderName, "-o", "ProjectOut.json"])
         json_data=open("ProjectOut.json").read()
         projects = json.loads(json_data)
         return render_template("home.html", projects = projects)
+
 
 # CREDIT PSET 7
 @app.route("/login", methods=["GET", "POST"])
