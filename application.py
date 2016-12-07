@@ -77,7 +77,6 @@ def home():
 
         # http://stackoverflow.com/questions/19794695/flask-python-buttons
         for project in projects:
-            print(project_url)
             if project["url"] == project_url:
                 project_url = project["url"]
                 project_name = project["title"]
@@ -137,7 +136,6 @@ def login():
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
             return ("invalid username and/or password")
-
         # remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
@@ -165,7 +163,7 @@ def register():
         # ensure password was submitted
         password = request.form.get("password")
         if not password:
-            flash("Must provide password", category="error")
+            flash("Must provide password")
             return render_template("register.html")
 
         # ensure password was confirmed correctly
@@ -174,8 +172,10 @@ def register():
 
         # encrypt user's password and insert user info into users table
         try:
-            new_id = c.execute("INSERT INTO users (username, hash) VALUES(:username, :hash_)",
+            c.execute("INSERT INTO users (username, hash) VALUES(:username, :hash_)",
                         {"username" : username, "hash_" : pwd_context.encrypt(password)})
+            c.execute("SELECT id FROM users WHERE username = :username", {"username":request.form.get("username")})
+            new_id = c.fetchone()
             # save the changes to the table
             conn.commit()
 
@@ -183,7 +183,7 @@ def register():
             return ("ERROR creating new user")
 
         # remember which user has logged in, redirect to index page and welcome
-        session["user_id"] = new_id
+        session["user_id"] = new_id["id"]
 
         flash("Registered!")
         return redirect(url_for("home"))
