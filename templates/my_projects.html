@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-  Home
+  My Projects
 {% endblock %}
 
 {% block main %}
@@ -11,15 +11,15 @@
     {% for project in projects %}
       <div class="col-md-4">
         <div class="thumbnail">
-          <a href={{ project["url"] }} class="projects">
+          <a href={{ project["project_url"] }} class="projects">
             <img class="img-responsive" src={{project["image_url"]}} alt="Project picture">
           </a>
           <div class="caption">
-            <a href={{ project["url"] }} class="projects">
-              <p>{{project["title"]}}</p>
+            <a href={{ project["project_url"] }} class="projects">
+              <p>{{ project["project_name"] }}</p>
             </a>
-            <form action="{{ url_for('home') }}" method="post">
-              <button name="DIYnow" class="btn btn-primary" value={{ project["url"] }}>DIYnow</button>
+            <form action="{{ url_for('my_projects') }}" method="post">
+              <button name="Delete" class="btn btn-primary" value={{ project["project_url"] }}>Delete</button>
             </form>
           </div>
         </div>

@@ -15,9 +15,14 @@ import sys
 # enabling print statements
 sys.stdout.flush()# TODO: CLeanup import statements
 # TODO: CONN.CLOSE?!?!
+# TODO: DELETE DUPLICATE PROJECTS
 # TODO: FLASH FOR INCORRECT PASSWORDS/USERNAME, ETC
 # TODO: ADD THIS FEATURE??
 # number of projects to display per row
+# TODO: STILL OCCASIONALLY DISPLAY 8/9 PROJECTS
+# TODO: ADD TRY/CATCHES TO EVERY c.execute!!
+# TODO: MORE IN SYNC TITLES BETWEEN THE SPIDERS ITEMS AND THE TABLE!!!
+#   (EX: url vs project_url)
 PROJECTS_PER_ROW = 3
 
 # -----------------------------database creation--------------------------------
@@ -55,7 +60,7 @@ Session(app)
 # ---------------------------------END SETUP------------------------------------
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/home", methods=["GET", "POST"])
 @login_required
 def home():
     """Show new projects and allow user to add projects to their list"""
@@ -64,21 +69,19 @@ def home():
     if request.method == "POST":
         user_id = session["user_id"]
 
-        # get which number project the user selected
-        index = request.form["DIYnow"]
-
-        # convert to 0 indexing
-        index = int(index) - 1
+        # get which project the user selected
+        project_url = request.form["DIYnow"]
 
         json_data=open("ProjectOut.json").read()
         projects = json.loads(json_data)
-        # http://stackoverflow.com/questions/19794695/flask-python-buttons
-        for i, project in enumerate(projects):
-        	if i == index:
-        		project_url = project["url"]
-        		project_name = project["title"]
-        		image_url = project["image_url"]
 
+        # http://stackoverflow.com/questions/19794695/flask-python-buttons
+        for project in projects:
+            print(project_url)
+            if project["url"] == project_url:
+                project_url = project["url"]
+                project_name = project["title"]
+                image_url = project["image_url"]
 
         # insert the new project into the portfolio table
         try:
@@ -88,9 +91,13 @@ def home():
 
         except RuntimeError:
             return ("ERROR updated too few or too many rows of projects")
+        # unique index (user_project) prevents duplicate addition of projects
+        # http://stackoverflow.com/questions/29312882/sqlite-preventing-duplicate-rows
+        except sqlite3.IntegrityError:
+            return ("you've already added that project!")
 
-        # flash("Added!")
-        return render_template("success.html")
+        flash("Added!")
+        return render_template("home.html", projects = projects)
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     else:
@@ -135,7 +142,7 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # redirect user to home page
-        return redirect(url_for("home"))
+        return redirect(url_for("my_projects"))
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     else:
@@ -158,7 +165,8 @@ def register():
         # ensure password was submitted
         password = request.form.get("password")
         if not password:
-            return ("must provide password")
+            flash("Must provide password", category="error")
+            return render_template("register.html")
 
         # ensure password was confirmed correctly
         if request.form.get("confirm_password") != password:
@@ -194,21 +202,43 @@ def logout():
     # redirect user to login form
     return redirect(url_for("login"))
 
-@app.route("/my_projects", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 @login_required
 def my_projects():
-   """Buy shares of stock."""
-    # if user reached route via POST (as by submitting a form via POST)
+    """Get all of user's favorited projects"""
+    # get all user's selections from projects
+    user_id = session["user_id"]
+    if request.method == "POST":
 
-# # Create table
-# c.execute('''CREATE TABLE stocks
-#              (date text, trans text, symbol text, qty real, price real)''')
+        # get which number the user selected
+        project_url = request.form["Delete"]
 
-# # Insert a row of data
-# c.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+        c.execute("SELECT project_url, project_name, image_url FROM projects WHERE id = :user_id", {"user_id" : user_id})
+        all_projects = c.fetchall()
 
-# # Save (commit) the changes
-# conn.commit()
+        for project in all_projects:
+            if project["project_url"] == project_url:
+                project_url = project["project_url"]
+
+        try:
+            c.execute("DELETE FROM projects WHERE id = :user_id AND project_url = :project_url", {"user_id" : user_id, "project_url" : project_url})
+            conn.commit()
+
+        except RuntimeError:
+            return("ERROR Deleting project")
+
+        flash("Deleted!")
+        c.execute("SELECT project_url, project_name, image_url FROM projects WHERE id = :user_id", {"user_id" : user_id})
+        all_projects = c.fetchall()
+        return render_template("my_projects.html", projects = all_projects)
+
+    # else if user reached route via GET (as by clicking a link or via redirect)
+    else:
+        c.execute("SELECT project_url, project_name, image_url FROM projects WHERE id = :user_id", {"user_id" : user_id})
+        all_projects = c.fetchall()
+
+        return render_template("my_projects.html", projects = all_projects)
+
 
 # # We can also close the connection if we are done with it.
 # # Just be sure any changes have been committed or they will be lost.
