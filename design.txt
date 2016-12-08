@@ -1,0 +1,212 @@
+-------------------------DETAILED DIRECTORY LAYOUT GUIDE------------------------
+
+Main directory: DIYnow
+"The main project directory, holds everything needed for the project"
+
+	Sub-directory: DIYnow
+	"This sub-directory contains python files scrapy expects so that we can use
+	its spiders to crawl websites"
+
+		Sub-Directory: Spiders
+		"Contains python files scrapy expects for running the spider"
+
+			__init__.py
+			"Expected so that scrapy can run the spider"
+
+			diyspider.py
+			"Contains the spiders I wrote for this project, ProjectSpider, which
+			is referred to by "Projects" and SearchSpider, referred to by
+			"Search".
+
+			ProjectSpider is the main spider used by the website. It crawls 3
+			different websites from one spider. It's parse method sets off a
+			chain of requests, allowing the spider to navigate from one site to
+			the other. Additionally, ProjectSpider filters some of its results.
+			For Makezine in particular, some of its project categories are not
+			strongly correlated to DIY projects, such as "education."
+
+			ProjectSpider navigates website sitemaps, as they are a convenient
+			listing of all of the pages on the site.
+
+			SearchSpider similarly implements this cascade of requests, but to
+			the specific search url of each site, including the user's search
+			query at the end, and with no filtering. Additionally, SearchSpider
+			uses less method definitions, as it does not have to parse both a
+			categories page and a project page, but just the search project
+			page.
+
+
+		__init__.py
+		"Expected so that scrapy can run the spider"
+
+		items.py
+		A file expected by scrapy that defines the models for scraped items.
+		Defining an object with the important fields each spider needs to scrape
+		from each website. Each item and its fields are outputted to a json
+		output file. In the case of this project, three fields are needed: a
+		title field, a url field, and an image_url field. With these three
+		fields, the site can create a thumbnail of each project, showing a
+		picture of the project, the project title, and linking both of those
+		elements to the url for the project."
+
+		pipelines.py
+		"A file expected by scrapy that defines how scraped items will be
+		post-processed. In the case of this project, no post-processing is
+		needed, so the pipeline simply returns the item it was given"
+
+		settings.py
+		"A file expected by scrapy that defines the settings each spider is
+		configured with. Used for customizing the way the spider crawls. For
+		example, I used it to change the USER_AGENT of each spider, so the
+		spiders "see" the same page as a user with my computer's USER_AGENT
+		would." Additionally, I've configured some of the settings in this file
+		to speed up scrapy's slow crawling time for these three sites. I've set
+		LOG_ENABLED = False, to disable command line logging, speeding scrapy
+		up. Additionally, I've enabled set HTTPCACHE_ENABLED = True, allowing
+		the spider to cache pages it has scraped for faster access next time.
+		Finally, I've used the AUTOTHROTTLE_ENABLED = True setting, and
+		decreased the START_DELAY and MAX_DELAY settings to speed up how quickly
+		scrapy requests information from websites, without going to fast as to
+		be banned by the site.
+
+	Sub-directory: static
+	"Contains files needed using Flask's "static" folder standard. In this case,
+	contains the needed css and js files, and a website logo.
+
+		logo.png
+		"The website's logo in png format."
+
+		scripts.js
+		"The custom javascript the website utilizes." In this case the
+		javascript adds a loading icon for the page when rendering, and a script
+		which automatically opens projects in a new window when a user clicks on
+		them.
+
+		styles.css
+		"The custom css the website utilizes. Also contains some setup for the
+		loading icon, and css to restrict the size of the displayed images"
+
+	Sub-directory: templates
+	"Contains the html files the website displays. Jinja proved particularly
+	useful in the creation of these templates, mostly for iterating over
+	projects and displaying them."
+
+		home.html
+		"HTML for the website's homepage, which displays random projects for
+		the user"
+
+		layout.html
+		"The base layout, which all other HTML files in this project build upon.
+		Sets up configuration info and declarations, and creates the navbar."
+
+		login.html
+		"HTML for the website's login page, inviting users to log in to the
+		site."
+
+		my_projects.html
+		"HTML for the website page where the user can view all of their saved
+		projects. Works similarly to home.html, but with changes such as a
+		delete button instead of a save (DIYnow) button."
+
+		register.html
+		"HTML for the website's register page, inviting users to register an
+		account for the site."
+
+	Sub-directory: venv
+	"The virtual environment I worked in to create the site. Contains the
+	project's dependencies installed and ready for use. Can be activated by
+	navigating (via command line, such as terminal) to the main DIYnow
+	directory, and using the command: . venv/bin/activate". The user's command
+	line should now begin with a (venv), indicating the user is within the
+	virtual environment.
+
+	.gitignore
+	"gitignore file used to ignore commits with changes to .json, .pyc, or
+	.scrapy files." Created because the pyc files updated every time changes
+	were made, and because the HTTPCACHE files from the HTTPCACH_ENABLED setting
+	started piling up on Github.
+
+	DIYnow.db
+	"The SQLite3 database used by this project. Contains the tables, indexes,
+	sample user registrations, and projects I used for the site. Can be viewed
+	with a database viewer, such as DB Browser for SQLite
+	(http://sqlitebrowser.org/"). One particular index I use, user_project,
+	stands out, because it allows me to prevent duplicate addition of projects
+	by catching a sqlite3.IntegrityError
+
+	ProjectOut.json
+	"The JSON file the website writes to when scraping projects"
+
+	application.py
+	"The core of the website. Contains all the necessary Flask routes and setup,
+	SQLite3 setup and queries, and HTML rendering."
+
+	helpers.py
+	"Helper functions for application.py. In this case a login_required
+	decorator (CREDIT PSET7) that can be put above any Flask route the user
+	should be logged in for to access."
+
+	scrapy.cfg
+	"A file expected that scrapy which configures scrapy for this project"
+
+-----------------------END DETAILED DIRECTORY LAYOUT GUIDE----------------------
+
+-------------------------------DESIGN DECISIONS---------------------------------
+
+Regarding the two spiders with a large number of methods, handling multiple
+websites, why not make them separate spiders?
+
+	When I started implementing scrapy within Flask, I learned that I should
+	minimize the number of spiders I run. For each spider used, a seperate
+	subprocess is made in Flask. Each of these subprocesses completely stops all
+	other code while it completes, slowing down run-time significantly.
+	I attempted to implement a queue (such as with rq), to allow those spiders to
+	run concurrently with other code. However because my spiders are stored in their
+	own sub-directory, interfacing with rq would have made my code convoluted and
+	cluttered, as code for the spiders would have had to be moved out of that
+	sub-directory. Instead, I minimized the number of spiders that would be run, by
+	linking parsing methods for each crawled site within the spider itself. So, for
+	ProjectSpider, the spider parses Makezine's categories, then a Makezine project
+	page, then parses Instructable's categories, then a Instructables page, and so
+	on. The extra efficiency comes from the fact that this order is not necessarily
+	sequential. The spider will skip around depending on how fast it can access each
+	site, speeding up the scraping process when compared to separate spiders.
+
+Why is the website still fairly slow (~6-9 second loading time per home page)?
+And why does the loading icon not show for the whole process?
+
+	Part of the slow runtime is the fact that one subprocess must be run for the
+	spider that I do use, freezing all other loading (and also prohibiting a loading
+	icon from being loaded). An even larger part of the slow runtime is the fact
+	that some of the sites crawled actually appear to have slower page load times
+	for articles not on the front page. Because the scraper scrapes from website
+	sitemaps, the scraped pages are often not on the front page, and have a slower
+	speed.
+
+	Initially, the website would actually take upwards of 15 seconds to load the
+	page. Cutting down to only one spider, and enabling settings such as HTTPCACHE
+	and AUTOTHROTTLING helped speed up this runtime greatly (described in more
+	detail under the settings.py file description above)
+
+How do you get the search bar to tell the SearchSpider what to look for?
+
+	The problem of passing that search argument to the SearchSpider can be
+	solved by taking advantage of the fact that scrapy allows spiders to take
+	**kwargs, keyworded, not mandatory, arguments. By calling the spider's init
+	method when starting the spider, the value of **kwargs can be retrieved and
+	referenced later (with self.______).
+
+	As for which URL to direct the spider to, I inputted sample search terms
+	in the search menus of sites to be scraped, and then used the returned page
+	to find the correct xpath to lead to the title of each returned result.
+
+How did you define an image "representative" of a project?
+
+	After some browsing, I found the site:
+	https://tech.shareaholic.com/2012/11/02/how-to-find-the-image-that-best-respresents-a-web-page/
+    There, I learned about the og:image attribute. This tag is frequently used as a
+    picture preview for pages, and often used by social media. Searching for
+    this attribute on a page lets me find the "representative" image for the
+    project.
+
+------------------------------END DESIGN DECISIONS------------------------------

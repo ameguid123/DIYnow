@@ -1,0 +1,226 @@
+-----------------------------DIRECTORY LAYOUT GUIDE-----------------------------
+
+Main directory: DIYnow
+"The main project directory, holds everything needed for the project"
+
+	Sub-directory: DIYnow
+	"This sub-directory contains python files scrapy expects so that we can use
+	its spiders to crawl websites"
+
+		Sub-Directory: Spiders
+		"Contains python files scrapy expects for running the spider"
+
+			__init__.py
+			"Expected so that scrapy can run the spider"
+
+			diyspider.py
+			"Contains the spiders I wrote for this project, ProjectSpider, which
+			is referred to by "Projects" and SearchSpider, referred to by
+			"Search".
+
+		__init__.py
+		"Expected so that scrapy can run the spider"
+
+		items.py
+		"A file expected by scrapy that defines the models for scraped items.
+		Defining an object with the important fields each spider needs to scrape
+		from each website. Each item and its fields are outputted to a json
+		output file."
+
+		pipelines.py
+		"A file expected by scrapy that defines how scraped items will be
+		post-processed. In the case of this project, no post-processing is
+		needed, so the pipeline simply returns the item it was given"
+
+		settings.py
+		"A file expected by scrapy that defines the settings each spider is
+		configured with. Used for customizing the way the spider crawls. For
+		example, I used it to change the USER_AGENT of each spider, so the
+		spiders "see" the same page as a user with my computer's USER_AGENT
+		would"
+
+	Sub-directory: static
+	"Contains files needed using Flask's "static" folder standard. In this case,
+	contains the needed css and js files, and a website logo.
+
+		logo.png
+		"The website's logo in png format."
+
+		scripts.js
+		"The custom javascript the website utilizes."
+
+		styles.css
+		"The custom css the website utilizes."
+
+	Sub-directory: templates
+	"Contains the html files the website displays"
+
+		home.html
+		"HTML for the website's homepage, which displays random projects for
+		the user"
+
+		layout.html
+		"The base layout, which all other HTML files in this project build upon.
+		Sets up configuration info and declarations, and creates the navbar."
+
+		login.html
+		"HTML for the website's login page, inviting users to log in to the
+		site."
+
+		my_projects.html
+		"HTML for the website page where the user can view all of their saved
+		projects. Works similarly to home.html, but with changes such as a
+		delete button instead of a save (DIYnow) button."
+
+		register.html
+		"HTML for the website's register page, inviting users to register an
+		account for the site."
+
+	Sub-directory: venv
+	"The virtual environment I worked in to create the site. Contains the
+	project's dependencies installed and ready for use. Can be activated by
+	navigating (via command line, such as terminal) to the main DIYnow
+	directory, and using the command: . venv/bin/activate". The user's command
+	line should now begin with a (venv), indicating the user is within the
+	virtual environment.
+
+	.gitignore
+	"gitignore file used to ignore commits with changes to .json, .pyc, or
+	.scrapy files."
+
+	DIYnow.db
+	"The SQLite3 database used by this project. Contains the tables, indexes,
+	sample user registrations, and projects I used for the site. Can be viewed
+	with a database viewer, such as DB Browser for SQLite
+	http://sqlitebrowser.org/"
+
+	ProjectOut.json
+	"The JSON file the website writes to when scraping projects"
+
+	application.py
+	"The core of the website. Contains all the necessary Flask routes and setup,
+	SQLite3 setup, and HTML rendering."
+
+	helpers.py
+	"Helper functions for application.py. In this case a login_required
+	decorator (CREDIT PSET7) that can be put above any Flask route the user
+	should be logged in for to access."
+
+	scrapy.cfg
+	"A file expected that scrapy which configures scrapy for this project"
+
+--------------------------END DIRECTORY LAYOUT GUIDE----------------------------
+
+-------------------------------------SETUP--------------------------------------
+Downloading:
+
+The files used in this project can be found at:
+https://github.com/ameguid123/DIYnow.
+Navigate to the website above and download the project as a .zip file, under the
+green "Clone or download" button. Once downloaded, unzip the file, and move it
+to wherever you would like.
+
+Running:
+
+Open a command line interface on your computer (Mac OS X: Terminal, Windows:
+CLI). From there, use the change directory (cd) command to navigate to wherever
+you stored the project folder. An example can be found below, the commands
+used found after the $ sign:
+
+	TESTs-MacBook-Pro:~ Fathio$ cd Downloads/
+	TESTs-MacBook-Pro:Downloads Fathio$ cd DIYnow-master/
+	TESTs-MacBook-Pro:DIYnow-master Fathio$
+
+Next, you must activate the virtual environment (venv) included with this
+project. To do so, enter the command:
+
+	. venv/bin/activate
+
+Your command line should now begin with a (venv), indicating you are within the
+virtual environment (see below):
+
+	TESTs-MacBook-Pro:DIYnow-master Fathio$ . venv/bin/activate
+	(venv) TESTs-MacBook-Pro:DIYnow-master Fathio$
+
+Next, you must ell your command line the application to work with by exporting
+the FLASK_APP environment variable. In your command line, run:
+
+	export FLASK_APP=application.py
+
+Your command line should look something like:
+
+	(venv) TESTs-MacBook-Pro:DIYnow-master Fathio$ export FLASK_APP=application.py
+	(venv) TESTs-MacBook-Pro:DIYnow-master Fathio$
+
+Finally, you can run the website, using the following command in the command
+line:
+
+	python -m flask run
+
+You should see an output something like:
+
+	(venv) TESTs-MacBook-Pro:DIYnow-master Fathio$ python -m flask run
+	 * Serving Flask app "application"
+	 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+
+Navigate to the address specified by the second line (for this example it is
+http://127.0.0.1:5000) in a web-browser, and you should see the login page.
+
+-----------------------------------END SETUP------------------------------------
+
+-------------------------------------USAGE--------------------------------------
+
+Upon first navigating to the site, you should be directed to the site's login
+page. Because you do not yet have an account, you can use the "Register" button
+at the top left of the website's navigation menu to sign up for an account. To
+register, the site requires you enter a unique username (not taken by any other
+users), a password, and a password confirmation. If any field is incorrectly
+filled out, the request will not register an account, and the user will be
+notified by an alert message at the top of the website.
+
+After registering for an account, you may need to wait for a few seconds. The
+site is sending you to the Home page, which contains 9 randomly selected
+projects from three different websites. It is also creating an HTTP cache, which
+will be used later to speed up runtime slightly.
+
+After the loading finishes, you should find yourself at the website's homepage.
+Each time you visit this page, there will be different projects to view. Each
+project contains a picture representative of that project, and the project's
+title, both links you can click to arrive at the project's original site. If you
+do not find any of the current projects interesting, simply reload the page, and
+a new batch of projects will be displayed. Again, the site may take some time to
+load whenever viewing projects, as it is navigating 3 different websites, and
+one of them has its sitemap stored such that it takes some time to parse
+through.
+
+If a project has piqued your curiosity, but you do not quite want to add it to
+your project list, you can click the project picture or the project's title, and
+take a look at it on the website it came from.
+
+If you are interested in completing a project, you can store it in your project
+list by clicking the "DIYnow" button beneath the project's title. You will get
+a notification at the top of the website, letting you know the project has been
+added.
+
+To view your saved projects, you can navigate to the "My Projects" button of the
+navbar. Here you can browse all of your saved projects, and click them to be
+directed to the site they came from. You can also delete your saved projects by
+clicking the "Delete" button beneath the project's title.
+
+You can go back to the Home page to add more items by clicking the "Home" button
+of the navbar.
+
+Finally, no matter where on the site you are, you can search for new projects
+by a keyword or category. Simply type into the searchbar at the top left of the
+navbar, and hit enter or click the search button. The site will then load and
+redirect you to the Home page with the results for your search.
+
+When you're done using the site, click the "Log Out button at the top right of
+the website to log out, and be redirected to the login page." Your projects will
+be saved for next time you login.
+
+-----------------------------------END USAGE------------------------------------
+
+
+
+

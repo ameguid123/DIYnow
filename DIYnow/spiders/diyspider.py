@@ -159,10 +159,10 @@ class SearchSpider(Spider):
     # name of the spider, used to launch the spider
     name = "Search"
 
+    # http://stackoverflow.com/questions/9681114/how-to-give-url-to-scrapy-for-crawling
     def __init__(self, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
         # http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
-        # http://stackoverflow.com/questions/9681114/how-to-give-url-to-scrapy-for-crawling
         # passing in our category argument
         self.category = kwargs.get("category")
         self.start_urls = ["http://www.makezine.com/page/1/?s=%s" % kwargs.get("category")]
