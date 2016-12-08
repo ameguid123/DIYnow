@@ -1,3 +1,4 @@
+<!-- Layout serves as the base template for the others to build upon -->
 {% extends "layout.html" %}
 
 {% block title %}
@@ -6,11 +7,16 @@
 
 {% block main %}
   <div class="container-fluid">
-  <!-- http://getbootstrap.com/components/#thumbnails -->
+    <!-- http://getbootstrap.com/components/#thumbnails -->
+    <!-- the row to contain our projects -->
     <div class="row">
+    <!-- iterate over every project from the ones we've been sent, and display -->
     {% for project in projects %}
+      <!-- take up 1/3 of the page for each project, making them thumbnails -->
       <div class="col-md-4">
         <div class="thumbnail">
+          <!-- use jinja to get the project url stored in each project -->
+          <!-- Make picture and caption of project links to the project's original page -->
           <a href={{ project["url"] }} class="projects">
             <img class="img-responsive" src={{project["image_url"]}} alt="Project picture">
           </a>
@@ -18,6 +24,8 @@
             <a href={{ project["url"] }} class="projects">
               <p>{{project["title"]}}</p>
             </a>
+            <!-- create a button that will redirect to the home page with a post method -->
+            <!-- this will allow the user to add projects to their my_projects page -->
             <form action="{{ url_for('home') }}" method="post">
               <button name="DIYnow" class="btn btn-primary" value={{ project["url"] }}>DIYnow</button>
             </form>

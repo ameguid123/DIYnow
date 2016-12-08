@@ -1,4 +1,5 @@
 /* http://stackoverflow.com/questions/18612651/how-to-use-responsive-background-image-in-css3-in-bootstrap */
+/* creating our site background image, used across the website so in html tag */
 html {
   background: url(http://cdn1.bestpsdfreebies.com/wp-content/uploads/2014/03/blueprint-pattern-4.jpg) no-repeat center center fixed;
 	-webkit-background-size: cover;
@@ -7,13 +8,19 @@ html {
 	background-size: cover;
 }
 
+/* Add padding to the body, so navbar doesn't cover up our images */
+/* http://stackoverflow.com/questions/25787949/how-to-add-padding-top-to-body-in-bootstrap3-with-custom-css-file */
 body {
 	background-color: transparent;
 	padding-top: 70px;
 }
+
+
+/* http://smallenvelop.com/display-loading-icon-page-loads-completely/ */
 /* This only works with JavaScript,
 if it's not present, don't show loader */
-/* http://smallenvelop.com/display-loading-icon-page-loads-completely/ */
+
+/* loading icon shows up when the page is loading up (would run after scraping) */
 .no-js #loader { display: none;  }
 .js #loader { display: block; position: absolute; left: 100px; top: 0; }
 .preload {
@@ -26,14 +33,16 @@ if it's not present, don't show loader */
   background: url(http://smallenvelop.com/wp-content/uploads/2014/08/Preloader_3.gif) center no-repeat #fff;
 }
 
+/* from PSET7 */
+/* centering contents of all containers */
 .container {
-  /* center contents */
   margin-left: auto;
   margin-right: auto;
   text-align: center;
 }
 
 /* from PSET7 */
+/* setting up forms for login/register pages, centering and setting width */
 main .form-control {
   /* center form controls */
   display: inline-block;
@@ -42,23 +51,12 @@ main .form-control {
   width: auto;
 }
 
+/* restricting size of the thumbnail boxes */
 .thumbnail {
   height: 400px;
 }
 
+/* restricting size of the images within the thumbnail boxes */
 .img-responsive {
   max-height: 70%;
-}
-/* colors for navbar */
-.navbar-default .navbar-brand .blue {
-  color: #537fbe;
-}
-.navbar-default .navbar-brand .red {
-  color: #ea433b;
-}
-.navbar-default .navbar-brand .yellow {
-  color: #f5b82e;
-}
-.navbar-default .navbar-brand .green {
-  color: #2e944b;
 }

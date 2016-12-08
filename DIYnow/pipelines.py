@@ -7,5 +7,6 @@
 
 
 class DiynowPipeline(object):
+	""" how to process the items, in this case just return """
     def process_item(self, item, spider):
         return item

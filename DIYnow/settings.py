@@ -11,17 +11,21 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
+# name of the bot implemented by this Scrapy project (project name)
+#  used to construct the User-Agent by default, also for logging.
 BOT_NAME = 'DIYnow'
 
+# where our spiders are located
 SPIDER_MODULES = ['DIYnow.spiders']
 NEWSPIDER_MODULE = 'DIYnow.spiders'
-# speeding up scraper
+
+# speeding up scraper by disabling logging
 LOG_ENABLED = False
 
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'DIYnow (+http://www.yourdomain.com)'
+
 # https://doc.scrapy.org/en/latest/topics/settings.html#user-agent
 # CREDIT: http://stackoverflow.com/questions/24119840/scrapy-shell-gets-301-redirected-to-url-without-parameters
+# so the scraper "sees" the same page as a user would (used to create xpaths)
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
 
 
@@ -77,6 +81,7 @@ ROBOTSTXT_OBEY = True
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
+# enabling autothrottle to speed up scraper
 AUTOTHROTTLE_ENABLED = True
 # The initial download delay
 AUTOTHROTTLE_START_DELAY = 0.1
@@ -90,6 +95,7 @@ AUTOTHROTTLE_MAX_DELAY = 0.5
 
 # Enable and configure HTTP caching (disabled by default)
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
+# enabling an HTTP cache to increase scrapingspeed
 HTTPCACHE_ENABLED = True
 #HTTPCACHE_EXPIRATION_SECS = 0
 #HTTPCACHE_DIR = 'httpcache'

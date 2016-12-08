@@ -1,3 +1,4 @@
+<!-- Layout serves as the base template for the others to build upon -->
 {% extends "layout.html" %}
 
 {% block title %}
@@ -5,22 +6,26 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container">
-        <form action="{{ url_for('register') }}" method="post">
-            <fieldset>
-                <div class="form-group">
-                    <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
-                </div>
-                <div class="form-group">
-                    <input class="form-control" name="password" placeholder="Password" type="password"/>
-                </div>
-                <div class="form-group">
-                    <input class="form-control" name="confirm_password" placeholder="Confirm password" type="password"/>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-default" type="submit">Register</button>
-                </div>
-            </fieldset>
-        </form>
-    </div>
+  <!-- CREDIT pset7 -->
+  <!-- setup the fields for registering (username, password, password confirm)-->
+  <div class="container">
+    <!--redirect to register page with POST method if user submits form -->
+    <form action="{{ url_for('register') }}" method="post">
+      <fieldset>
+        <!-- forms to contain username, password, confirm password, and register button -->
+        <div class="form-group">
+          <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
+        </div>
+        <div class="form-group">
+          <input class="form-control" name="password" placeholder="Password" type="password"/>
+        </div>
+        <div class="form-group">
+          <input class="form-control" name="confirm_password" placeholder="Confirm password" type="password"/>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-default" type="submit">Register</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
 {% endblock %}

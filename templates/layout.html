@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+<!-- Layout serves as the base template for the others to build upon -->
 <html lang="en">
   <head>
+    <!-- The below 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
     <title>DIYnow: {% block title %}{% endblock %}</title>
 
     <!-- Bootstrap Core CSS-->
-    <!--link href="bootstrap.min.css" rel="stylesheet"-->
     <!-- http://getbootstrap.com/ -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
 
@@ -27,9 +28,6 @@
      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -39,19 +37,26 @@
   </head>
   <body>
   <!-- http://smallenvelop.com/display-loading-icon-page-loads-completely/ -->
+  <!-- creating a div for our loading icon -->
   <div class="preload"></div>
     <!-- https://getbootstrap.com/components/#navbar-static-top -->
+    <!-- creating a bootstrap navbar-->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
           <!-- CREDIT https://www.freelogoservices.com/step3/parent/216472?lastsave=74d72fc32fc3785796675d4529d12480 -->
+          <!-- displying logo created using above site, links to home-->
           <a class="navbar-brand" href="{{ url_for('home') }}"><img src="/static/logo.png" alt="Logo" height = 29px></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <!-- CREDIT PSET 7 -->
+          <!-- Change navbar button options depending on whether user is signed in -->
           {% if session.user_id %}
+          <!-- configuring search bar to send a POST request to home route -->
+          <!-- will send request whether click button or press enter -->
             <form class="navbar-form navbar-left" action="{{ url_for('home') }}" method="POST">
                 <fieldset>
                     <div class="form-group">
@@ -62,6 +67,7 @@
                     </div>
                 </fieldset>
             </form>
+            <!-- setup navbar buttons with their respective routes -->
             <ul class="nav navbar-nav">
               <li><a href="{{ url_for('my_projects') }}">My Projects</a></li>
               <li><a href="{{ url_for('home') }}">Home</a></li>
@@ -70,6 +76,7 @@
                 <li><a href="{{ url_for('logout') }}">Log Out</a></li>
             </ul>
           {% else %}
+          <!-- if user isn't logged in, show the register/log in buttons -->
               <ul class="nav navbar-nav navbar-right">
                   <li><a href="{{ url_for('register') }}">Register</a></li>
                   <li><a href="{{ url_for('login') }}">Log In</a></li>
@@ -79,6 +86,7 @@
     </nav>
 
     <!-- CREDIT CS50 pset7 -->
+    <!-- allow us to flash messages for the user -->
     {% if get_flashed_messages() %}
         <header>
           <div class="container">
@@ -89,6 +97,7 @@
         </header>
     {% endif %}
     <main>
+      <!-- where each other html page's content will go -->
       {% block main %}{% endblock %}
     </main>
   </body>
