@@ -171,14 +171,19 @@ dependency issue. To deal with this I've frozen the venv on my computer and
 added a requirements.txt file. In the even that running did not work, try:
 
 (if you do not have pip installed)
-	sudo easy_install pip
+	sudo easy_install pip3
 
 enter your password for the account on your computer and hit enter.
 
 Then, still in the venv, run:
-	pip install -r requirements.txt
+	pip3 install --ignore-installed -r requirements.txt
 
 To ensure consistency of the requirements for the project.
+
+And finally, in the event that the requirements text setup fails as well, I
+would go through the requirements in requirements.txt one by one and pip install
+each one, doing:
+	pip3 install PACKAGE_NAME
 
 
 -----------------------------------END SETUP------------------------------------
