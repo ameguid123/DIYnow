@@ -166,6 +166,21 @@ You should see an output something like:
 Navigate to the address specified by the second line (for this example it is
 http://127.0.0.1:5000) in a web-browser, and you should see the login page.
 
+In the event that the last python command does not work, there may be a
+dependency issue. To deal with this I've frozen the venv on my computer and
+added a requirements.txt file. In the even that running did not work, try:
+
+(if you do not have pip installed)
+	sudo easy_install pip
+
+enter your password for the account on your computer and hit enter.
+
+Then, still in the venv, run:
+	pip install -r requirements.txt
+
+To ensure consistency of the requirements for the project.
+
+
 -----------------------------------END SETUP------------------------------------
 
 -------------------------------------USAGE--------------------------------------
