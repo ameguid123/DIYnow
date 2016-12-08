@@ -16,7 +16,7 @@ BOT_NAME = 'DIYnow'
 SPIDER_MODULES = ['DIYnow.spiders']
 NEWSPIDER_MODULE = 'DIYnow.spiders'
 # speeding up scraper
-LOG_ENABLED = True
+LOG_ENABLED = False
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'DIYnow (+http://www.yourdomain.com)'
