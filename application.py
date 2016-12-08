@@ -2,8 +2,6 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from flask_session import Session
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import gettempdir
-from datetime import datetime
-from time import gmtime, strftime
 import sqlite3
 import hashlib
 import subprocess
