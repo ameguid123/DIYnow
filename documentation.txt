@@ -154,8 +154,11 @@ Your command line should look something like:
 	(venv) TESTs-MacBook-Pro:DIYnow-master Fathio$ export FLASK_APP=application.py
 	(venv) TESTs-MacBook-Pro:DIYnow-master Fathio$
 
-Finally, you can run the website, using the following command in the command
-line:
+Finally, you can run the website. If using CS50 IDE, you can just enter the
+command:
+	flask run
+
+If using the command line on your computter, run the following command:
 
 	python -m flask run
 
