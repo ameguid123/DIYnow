@@ -114,6 +114,8 @@ Main directory: DIYnow
 -------------------------------------SETUP--------------------------------------
 Downloading:
 
+First, ensure you have the latest verison of python installed (minimum 3.5).
+
 The files used in this project can be found at:
 https://github.com/ameguid123/DIYnow.
 Navigate to the website above and download the project as a .zip file, under the
@@ -168,14 +170,9 @@ http://127.0.0.1:5000) in a web-browser, and you should see the login page.
 
 In the event that the last python command does not work, there may be a
 dependency issue. To deal with this I've frozen the venv on my computer and
-added a requirements.txt file. In the even that running did not work, try:
+added a requirements.txt file. In the even that running did not work, try
+running:
 
-(if you do not have pip installed)
-	sudo easy_install pip3
-
-enter your password for the account on your computer and hit enter.
-
-Then, still in the venv, run:
 	pip3 install --ignore-installed -r requirements.txt
 
 To ensure consistency of the requirements for the project.
